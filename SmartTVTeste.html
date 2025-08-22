@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Teste Avançado para Smart TV</title>
+    <!-- Incluindo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo Tone.js para áudio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        /* Estilos gerais para a página */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        /* Efeito de foco para navegação com controle remoto */
+        .focusable:focus {
+            outline: 4px solid #4299e1;
+            box-shadow: 0 0 20px rgba(66, 153, 225, 0.6);
+            transform: scale(1.05);
+            transition: all 0.2s ease-in-out;
+        }
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="w-full max-w-5xl mx-auto">
+        
+        <!-- Cabeçalho -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-5xl font-bold text-white">Painel de Teste Avançado</h1>
+            <p class="text-gray-400 mt-2">Testando JavaScript ao máximo em Smart TVs.</p>
+        </header>
+
+        <!-- Área de Saída/Log -->
+        <div id="output" class="w-full h-24 bg-gray-900 rounded-lg mb-8 p-4 text-center flex items-center justify-center text-lg font-mono border-2 border-gray-700">
+            Pressione um botão para ver o resultado.
+        </div>
+
+        <!-- Conteúdo Principal em Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Coluna Esquerda: Botões e Testes Rápidos -->
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col">
+                <h2 class="text-2xl font-bold mb-4">Testes de Interação</h2>
+                <div id="button-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <button id="btn-change-text" class="focusable btn p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold">Mudar Texto</button>
+                    <button id="btn-change-bg" class="focusable btn p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white font-semibold">Mudar Fundo</button>
+                    <button id="btn-play-sound" class="focusable btn p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold">Tocar Som</button>
+                    <button id="btn-toggle-element" class="focusable btn p-4 bg-yellow-500 hover:bg-yellow-600 rounded-lg text-black font-semibold">Ocultar/Mostrar</button>
+                    <button id="btn-log-console" class="focusable btn p-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold">Log no Console</button>
+                    <button id="btn-show-time" class="focusable btn p-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold">Mostrar Hora</button>
+                    <!-- NOVO BOTÃO DE TELA CHEIA -->
+                    <button id="btn-fullscreen" class="focusable btn p-4 bg-teal-600 hover:bg-teal-700 rounded-lg text-white font-semibold col-span-2 sm:col-span-1">Tela Cheia</button>
+                </div>
+                <div id="toggleable-element" class="mt-6 text-center flex-grow flex items-center justify-center">
+                    <img src="https://placehold.co/300x150/4A5568/E2E8F0?text=Imagem+de+Teste" alt="Imagem de Teste" class="mx-auto rounded-lg shadow-lg">
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Testes Complexos -->
+            <div class="space-y-8">
+                <!-- Teste de Vídeo -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
+                    <h2 class="text-2xl font-bold mb-4">Player de Vídeo</h2>
+                    <video id="video-player" class="w-full rounded-lg" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" poster="https://placehold.co/640x360/1a202c/ffffff?text=Video+Player"></video>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <button id="btn-vid-rewind" class="focusable btn p-3 bg-gray-700 hover:bg-gray-600 rounded-full text-white">⏪</button>
+                        <button id="btn-vid-play" class="focusable btn p-3 bg-gray-700 hover:bg-gray-600 rounded-full text-white">▶️</button>
+                        <button id="btn-vid-forward" class="focusable btn p-3 bg-gray-700 hover:bg-gray-600 rounded-full text-white">⏩</button>
+                    </div>
+                </div>
+
+                <!-- Teste de Animação -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
+                    <h2 class="text-2xl font-bold mb-4">Teste de Animação (Canvas)</h2>
+                    <canvas id="animation-canvas" class="w-full h-32 bg-gray-900 rounded-lg"></canvas>
+                    <button id="btn-toggle-animation" class="focusable btn p-3 mt-4 w-full bg-pink-600 hover:bg-pink-700 rounded-lg text-white font-semibold">Iniciar Animação</button>
+                </div>
+
+                <!-- Teste de Dados e DOM -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
+                    <h2 class="text-2xl font-bold mb-4">Testes de Dados e DOM</h2>
+                    <div class="flex gap-4 mb-4">
+                        <button id="btn-fetch-data" class="focusable btn p-3 w-full bg-cyan-600 hover:bg-cyan-700 rounded-lg text-white font-semibold">Buscar Dados (API)</button>
+                        <button id="btn-add-items" class="focusable btn p-3 w-full bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold">Adicionar Itens</button>
+                    </div>
+                    <div id="data-container" class="w-full min-h-[100px] bg-gray-900 rounded-lg p-3 border-2 border-gray-700 text-sm">
+                        Aqui aparecerão os dados da API ou os itens da lista.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Seleção dos Elementos do DOM ---
+        const outputDiv = document.getElementById('output');
+        // A query agora é feita no final para garantir que todos os botões, incluindo o novo, sejam capturados.
+        let focusableElements;
+
+        // --- Lógica dos Botões de Teste Rápido ---
+        document.getElementById('btn-change-text').addEventListener('click', () => {
+            const texts = ["Texto alterado!", "Olá, Smart TV!", "JavaScript funcionando!"];
+            outputDiv.textContent = texts[Math.floor(Math.random() * texts.length)];
+        });
+        document.getElementById('btn-change-bg').addEventListener('click', () => {
+            const color = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            document.body.style.backgroundColor = color;
+            outputDiv.textContent = `Cor de fundo alterada para: ${color}`;
+        });
+        document.getElementById('btn-play-sound').addEventListener('click', () => {
+            Tone.start();
+            const synth = new Tone.Synth().toDestination();
+            synth.triggerAttackRelease("C4", "8n");
+            outputDiv.textContent = 'Som tocado com sucesso!';
+        });
+        document.getElementById('btn-toggle-element').addEventListener('click', () => {
+            const el = document.getElementById('toggleable-element');
+            const isVisible = el.style.display !== 'none';
+            el.style.display = isVisible ? 'none' : 'block';
+            outputDiv.textContent = `Imagem ${isVisible ? 'ocultada' : 'exibida'}.`;
+        });
+        document.getElementById('btn-log-console').addEventListener('click', () => {
+            console.log(`[LOG DE TESTE]: Botão pressionado em ${new Date().toISOString()}`);
+            outputDiv.textContent = 'Mensagem de teste enviada para o console.';
+        });
+        document.getElementById('btn-show-time').addEventListener('click', () => {
+            outputDiv.textContent = `Hora: ${new Date().toLocaleTimeString('pt-BR')}`;
+        });
+
+        // --- LÓGICA DO BOTÃO DE TELA CHEIA ---
+        document.getElementById('btn-fullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                // Se não estiver em tela cheia, solicita
+                document.documentElement.requestFullscreen().catch(err => {
+                    outputDiv.textContent = `Erro ao entrar em tela cheia: ${err.message}`;
+                });
+                outputDiv.textContent = 'Entrando em tela cheia...';
+            } else {
+                // Se já estiver em tela cheia, sai
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    outputDiv.textContent = 'Saindo da tela cheia.';
+                }
+            }
+        });
+
+        // --- Lógica do Player de Vídeo ---
+        const video = document.getElementById('video-player');
+        const playBtn = document.getElementById('btn-vid-play');
+        playBtn.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+                playBtn.textContent = '⏸️';
+                outputDiv.textContent = 'Vídeo: Reproduzindo';
+            } else {
+                video.pause();
+                playBtn.textContent = '▶️';
+                outputDiv.textContent = 'Vídeo: Pausado';
+            }
+        });
+        document.getElementById('btn-vid-rewind').addEventListener('click', () => {
+            video.currentTime -= 10;
+            outputDiv.textContent = 'Vídeo: Retrocedeu 10s';
+        });
+        document.getElementById('btn-vid-forward').addEventListener('click', () => {
+            video.currentTime += 10;
+            outputDiv.textContent = 'Vídeo: Avançou 10s';
+        });
+
+        // --- Lógica da Animação em Canvas ---
+        const canvas = document.getElementById('animation-canvas');
+        const ctx = canvas.getContext('2d');
+        let animationRunning = false;
+        let x = 0;
+        let direction = 1;
+        
+        function animate() {
+            if (!animationRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#4299e1';
+            ctx.fillRect(x, 20, 50, 50);
+            x += 2 * direction;
+            if (x > canvas.width - 50 || x < 0) {
+                direction *= -1;
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        document.getElementById('btn-toggle-animation').addEventListener('click', (e) => {
+            animationRunning = !animationRunning;
+            if (animationRunning) {
+                canvas.width = canvas.offsetWidth; // Sincroniza o tamanho do canvas
+                canvas.height = canvas.offsetHeight;
+                e.target.textContent = 'Parar Animação';
+                outputDiv.textContent = 'Animação iniciada.';
+                animate();
+            } else {
+                e.target.textContent = 'Iniciar Animação';
+                outputDiv.textContent = 'Animação parada.';
+            }
+        });
+
+        // --- Lógica de Dados e DOM ---
+        const dataContainer = document.getElementById('data-container');
+        const fetchBtn = document.getElementById('btn-fetch-data');
+        const addItemsBtn = document.getElementById('btn-add-items');
+        let itemCount = 0;
+
+        fetchBtn.addEventListener('click', async () => {
+            outputDiv.textContent = 'Buscando dados da API...';
+            dataContainer.innerHTML = 'Carregando...';
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                if (!response.ok) {
+                    throw new Error(`Erro na rede: ${response.statusText}`);
+                }
+                const data = await response.json();
+                dataContainer.innerHTML = `
+                    <h3 class="font-bold text-lg text-cyan-400 mb-2">Post #${data.id}</h3>
+                    <p class="font-semibold mb-1">${data.title}</p>
+                    <p class="text-gray-400">${data.body}</p>
+                `;
+                outputDiv.textContent = 'Dados da API carregados com sucesso!';
+            } catch (error) {
+                console.error('Falha ao buscar dados:', error);
+                dataContainer.innerHTML = `<span class="text-red-500">Falha ao carregar dados. Verifique o console.</span>`;
+                outputDiv.textContent = 'Erro ao buscar dados da API.';
+            }
+        });
+
+        addItemsBtn.addEventListener('click', () => {
+            if (itemCount === 0) {
+                dataContainer.innerHTML = ''; // Limpa a mensagem inicial
+            }
+            itemCount++;
+            const newItem = document.createElement('div');
+            newItem.className = 'p-2 bg-gray-700 rounded mb-2';
+            newItem.textContent = `Item dinâmico #${itemCount} adicionado em ${new Date().toLocaleTimeString()}`;
+            dataContainer.appendChild(newItem);
+            outputDiv.textContent = `Item #${itemCount} adicionado à lista.`;
+        });
+
+
+        // --- Navegação pelo Teclado (Controle Remoto) ---
+        document.addEventListener('keydown', (e) => {
+            // 'Enter' simula um clique no elemento focado
+            if (e.key === 'Enter') {
+                const currentFocused = document.activeElement;
+                if (currentFocused && typeof currentFocused.click === 'function') {
+                    // Previne o envio do formulário se o botão de submit estiver focado
+                    if (currentFocused.type !== 'submit') {
+                        e.preventDefault();
+                    }
+                    currentFocused.click();
+                }
+            }
+
+            // Setas de navegação
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault(); // Previne a rolagem da página com as setas
+
+                const currentFocused = document.activeElement;
+                let currentIndex = focusableElements.indexOf(currentFocused);
+                
+                if (currentIndex === -1) {
+                    if (focusableElements.length > 0) focusableElements[0].focus();
+                    return;
+                }
+
+                let nextIndex = currentIndex;
+                // Lógica de navegação simplificada para este layout
+                const numCols = window.innerWidth < 640 ? 2 : 3; // Ajusta o número de colunas do grid de botões
+                
+                switch (e.key) {
+                    case 'ArrowRight':
+                        nextIndex = (currentIndex + 1);
+                        if (nextIndex >= focusableElements.length) nextIndex = 0; // Volta para o início
+                        break;
+                    case 'ArrowLeft':
+                        nextIndex = (currentIndex - 1);
+                        if (nextIndex < 0) nextIndex = focusableElements.length - 1; // Vai para o fim
+                        break;
+                    case 'ArrowDown':
+                        // Tenta pular para o elemento "abaixo" no grid
+                        nextIndex = currentIndex + numCols;
+                        if (nextIndex >= focusableElements.length) nextIndex = focusableElements.length - 1;
+                        break;
+                    case 'ArrowUp':
+                        // Tenta pular para o elemento "acima" no grid
+                        nextIndex = currentIndex - numCols;
+                        if (nextIndex < 0) nextIndex = 0;
+                        break;
+                }
+                
+                if (focusableElements[nextIndex]) {
+                    focusableElements[nextIndex].focus();
+                } else {
+                    // Fallback para o próximo/anterior se a lógica de grid falhar
+                     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                        focusableElements[(currentIndex + 1) % focusableElements.length].focus();
+                    } else {
+                        focusableElements[(currentIndex - 1 + focusableElements.length) % focusableElements.length].focus();
+                    }
+                }
+            }
+        });
+
+        // --- Inicialização da Página ---
+        window.onload = () => {
+            // Captura todos os elementos focáveis depois que a página carregou
+            focusableElements = Array.from(document.querySelectorAll('.focusable'));
+            if (focusableElements.length > 0) {
+                focusableElements[0].focus();
+            }
+            outputDiv.textContent = 'Página carregada. Use as setas e Enter.';
+            console.log('Página de teste avançado carregada.');
+        };
+    </script>
+</body>
+</html>
